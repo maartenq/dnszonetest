@@ -35,6 +35,11 @@ setup(
     ],
     package_dir={'dnszonetest':
                  'dnszonetest'},
+    entry_points={
+        'console_scripts': [
+            'dnszonetest = dnszonetest.cli:main',
+        ]
+    },
     include_package_data=True,
     install_requires=requirements,
     license="ISCL",

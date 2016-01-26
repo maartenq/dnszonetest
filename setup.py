@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# vim: ts=4 et sw=4 sts=4 ft=python fenc=UTF-8 ai
 
 
 try:
@@ -27,8 +28,8 @@ setup(
     version='0.2.0',
     description="Dnszonetest tests a DNS zone file agaist a given name server.",
     long_description=readme + '\n\n' + history,
-    author="Maarten",
-    author_email='@twaarten',
+    author="Maarten Diemel",
+    author_email='maarten@maartendiemel.nl',
     url='https://github.com/maartenq/dnszonetest',
     packages=[
         'dnszonetest',

@@ -10,8 +10,6 @@ Tests for `dnszonetest` module.
 
 import unittest
 
-from dnszonetest import dnszonetest
-
 
 class TestDnszonetest(unittest.TestCase):
 

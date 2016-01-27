@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# vim: ts=4 et sw=4 sts=4 ft=python fenc=UTF-8 ai
+# vim: ai et ts=4 sw=4 sts=4 fenc=UTF-8 ft=python
 
 '''
 dnszonetest.cli
@@ -27,11 +27,6 @@ def setup_logging(verbose):
         log_level = logging.INFO
         log_format = logging.Formatter(fmt='%(message)s',)
 
-    #log_format = logging.Formatter(
-    #    fmt='%(asctime)s %(name)s [%(process)d] %(levelname)-8s %(message)s',
-    #    datefmt='%b %d %H:%M:%S',
-    #)
-
     # Console Handler
     handler = logging.StreamHandler()
     handler.setFormatter(log_format)
@@ -52,15 +47,16 @@ def parse_pcrunner_args(args):
         description='DNS Zone Test',
     )
     parser.add_argument(
-        '-l',
-        '--log-file',
-        help='log file',
-    )
-    parser.add_argument(
         '-v',
         '--verbose',
         action='store_true',
         help='Show verbose info (level DEBUG).',
+    )
+    parser.add_argument(
+        '-q',
+        '--quiet',
+        action='store_true',
+        help='No output.',
     )
     parser.add_argument(
         '--version',

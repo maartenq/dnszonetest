@@ -2,15 +2,17 @@
 DNS Zone Test
 ===============================
 
-.. image:: https://img.shields.io/pypi/v/dnszonetest.svg
-        :target: https://pypi.python.org/pypi/dnszonetest
-
-.. image:: https://img.shields.io/travis/maartenq/dnszonetest.svg
-        :target: https://travis-ci.org/maartenq/dnszonetest
+.. image:: https://badge.fury.io/py/dnszonetest.svg
+    :target: http://badge.fury.io/py/dnszonetest
 
 .. image:: https://readthedocs.org/projects/dnszonetest/badge/?version=latest
-        :target: https://readthedocs.org/projects/dnszonetest/?badge=latest
-        :alt: Documentation Status
+    :target: http://dnszonetest.readthedocs.org/en/latest/
+
+.. image:: https://travis-ci.org/maartenq/dnszonetest.svg?branch=master
+    :target: https://travis-ci.org/maartenq/dnszonetest
+
+.. image:: https://codecov.io/github/maartenq/dnszonetest/coverage.svg?branch=master
+        :target: https://codecov.io/github/maartenq/dnszonetest?branch=master
 
 
 Dnszonetest tests a DNS zone file agaist a given name server.

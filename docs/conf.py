@@ -22,6 +22,9 @@ import os
 # absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
 
+# Read the Docs check
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
 # Get the project root dir, which is the parent dir of this
 cwd = os.getcwd()
 project_root = os.path.dirname(cwd)
@@ -56,7 +59,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'DNS Zone Test'
-copyright = u'2016, Maarten'
+copyright = u'2016, Maarten Diemel'
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -111,7 +114,13 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+if not on_rtd:  # only import and set the theme if we're building docs locally
+    try:
+        import sphinx_rtd_theme
+        html_theme = 'sphinx_rtd_theme'
+        html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+    except ImportError:
+        html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the
@@ -210,7 +219,7 @@ latex_elements = {
 latex_documents = [
     ('index', 'dnszonetest.tex',
      u'DNS Zone Test Documentation',
-     u'Maarten', 'manual'),
+     u'Maarten Diemel', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at
@@ -241,7 +250,7 @@ latex_documents = [
 man_pages = [
     ('index', 'dnszonetest',
      u'DNS Zone Test Documentation',
-     [u'Maarten'], 1)
+     [u'Maarten Diemel'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -256,7 +265,7 @@ man_pages = [
 texinfo_documents = [
     ('index', 'dnszonetest',
      u'DNS Zone Test Documentation',
-     u'Maarten',
+     u'Maarten Diemel',
      'dnszonetest',
      'One line description of project.',
      'Miscellaneous'),

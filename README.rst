@@ -15,8 +15,12 @@ DNS Zone Test
 
 Dnszonetest tests a DNS zone file agaist a given name server.
 
-* Free software: ISC license
+* Free software: `ISC license`_
 * Documentation: https://dnszonetest.readthedocs.org.
+* PyPi: https://pypi.python.org/pypi/dnszonetest
+* GitHub: https://github.com/maartenq/dnszonetest
+* Travis CI: https://travis-ci.org/maartenq/dnszonetest
+* Codecov: https://codecov.io/github/maartenq/dnszonetest
 
 Features
 --------
@@ -28,5 +32,6 @@ Credits
 
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 
+.. _`ISC license`: https://opensource.org/licenses/ISC
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage

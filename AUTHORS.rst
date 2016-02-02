@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* Maarten <@twaarten>
+* Maarten Diemel <maarten@maartendiemel.nl>
 
 Contributors
 ------------

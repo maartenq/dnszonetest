@@ -20,23 +20,25 @@ import sys
 logger = logging.getLogger(__name__)
 
 
-def setup_logging(verbose):
+def setup_logging(verbose, quiet):
+    # Root logger
+    logger = logging.getLogger()
+    # Clear all handlers
+    [handler.close() for handler in logger.handlers]
+    logger.handlers = []
+    # Root logger logs all
+    logger.setLevel(logging.DEBUG)
+    # Console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter(fmt='%(message)s',))
     if verbose:
-        log_level = logging.DEBUG
-        log_format = logging.Formatter(fmt='%(levelname)-8s %(message)s',)
-    else:
         log_level = logging.INFO
-        log_format = logging.Formatter(fmt='%(message)s',)
-
-    # Console Handler
-    handler = logging.StreamHandler()
-    handler.setFormatter(log_format)
-    handler.setLevel(log_level)
-
-    # Add to root logger
-    root_logger = logging.getLogger()
-    root_logger.setLevel(log_level)
-    root_logger.addHandler(handler)
+    elif quiet:
+        log_level = logging.CRITICAL
+    else:
+        log_level = logging.WARNING
+    console_handler.setLevel(log_level)
+    logger.addHandler(console_handler)
 
 
 def parse_args(args):
@@ -106,7 +108,7 @@ def main():
     # Parse args
     args = parse_args(sys.argv[1:])
     # Setup basic logging
-    setup_logging(args.verbose)
+    setup_logging(args.verbose, args.quiet)
     logger.debug('Arguments: %s', args)
     return 0
 

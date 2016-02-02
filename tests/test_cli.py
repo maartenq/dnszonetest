@@ -5,8 +5,8 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 import pytest
-from dnszonetest.cli import parse_args
-from dnszonetest.cli import main
+import logging
+from dnszonetest import cli
 
 
 def test_parse_args_empty():
@@ -14,14 +14,14 @@ def test_parse_args_empty():
     Test the long command-line arguments to dnszonetest.
     '''
     with pytest.raises(SystemExit):
-        parse_args([])
+        cli.parse_args([])
 
 
 def test_parse_args_short():
     '''
     Test the short command-line arguments to dnszonetest.
     '''
-    args = parse_args(
+    args = cli.parse_args(
         [
             'example.com',
             '/var/named/zone/example.com',
@@ -51,7 +51,7 @@ def test_parse_args_long():
     '''
     Test the long command-line arguments to dnszonetest.
     '''
-    args = parse_args(
+    args = cli.parse_args(
         [
             'example.com',
             '/var/named/example.com',
@@ -81,7 +81,7 @@ def test_parse_args_pos():
     '''
     Test the long command-line arguments to dnszonetest.
     '''
-    args = parse_args(
+    args = cli.parse_args(
         [
             'example.com',
             '/var/named/zone/example.com',
@@ -105,4 +105,21 @@ def test_main(monkeypatch):
         'sys.argv',
         ['dnszonetest', 'example.com', '/var/named/zone/example.com'],
     )
-    assert main() == 0
+    assert cli.main() == 0
+
+
+@pytest.mark.parametrize(
+    'verbose,quiet,log_level',
+    [
+        (True, True, logging.INFO),
+        (True, False, logging.INFO),
+        (False, False, logging.WARNING),
+        (False, True, logging.CRITICAL),
+
+    ]
+)
+def test_setup_logging_level(verbose, quiet, log_level):
+    cli.setup_logging(verbose, quiet)
+    logger = logging.getLogger()
+    print(logger.handlers)
+    assert logger.handlers[0].level == log_level

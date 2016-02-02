@@ -9,11 +9,12 @@ dnszonetest.cli
 Main dnszonetest CLI.
 '''
 
+from __future__ import print_function
+from __future__ import unicode_literals
 import argparse
 import logging
 import logging.handlers
 import sys
-from . import __version__
 
 
 logger = logging.getLogger(__name__)
@@ -67,11 +68,6 @@ def parse_args(args):
         help='No output.',
     )
     parser.add_argument(
-        '--version',
-        action='store_true',
-        help='Show version',
-    )
-    parser.add_argument(
         '-d',
         '--nameserver',
         help='DNS server to query.',
@@ -109,16 +105,10 @@ def main():
     '''
     # Parse args
     args = parse_args(sys.argv[1:])
-
-    # Version info
-    if args.version:
-        print(__version__)
-        sys.exit(0)
-
     # Setup basic logging
     setup_logging(args.verbose)
-
     logger.debug('Arguments: %s', args)
+    return 0
 
 if __name__ == '__main__':
     main()

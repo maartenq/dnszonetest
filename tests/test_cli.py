@@ -2,8 +2,11 @@
 # vim: ts=4 et sw=4 sts=4 ft=python fenc=UTF-8 ai
 # tests/test_cli.py
 
+from __future__ import print_function
+from __future__ import unicode_literals
 import pytest
 from dnszonetest.cli import parse_args
+from dnszonetest.cli import main
 
 
 def test_parse_args_empty():
@@ -20,11 +23,11 @@ def test_parse_args_short():
     '''
     args = parse_args(
         [
-            'hva.nl',
-            '/var/named/hva.nl',
+            'example.com',
+            '/var/named/zone/example.com',
             '-v',
             '-q',
-            '-d', 'ns.hva.nl',
+            '-d', 'ns.example.com',
             '-r',
             '-t',
             '-n',
@@ -32,12 +35,11 @@ def test_parse_args_short():
         ]
     )
     assert vars(args) == {
-        'zonename': 'hva.nl',
-        'zonefile': '/var/named/hva.nl',
+        'zonename': 'example.com',
+        'zonefile': '/var/named/zone/example.com',
         'verbose': True,
         'quiet': True,
-        'version': False,
-        'nameserver': 'ns.hva.nl',
+        'nameserver': 'ns.example.com',
         'norec': True,
         'ttl': True,
         'ns': True,
@@ -51,11 +53,11 @@ def test_parse_args_long():
     '''
     args = parse_args(
         [
-            'hva.nl',
-            '/var/named/hva.nl',
+            'example.com',
+            '/var/named/example.com',
             '--verbose',
             '--quiet',
-            '--nameserver', 'ns.hva.nl',
+            '--nameserver', 'ns.example.com',
             '--norec',
             '--ttl',
             '--ns',
@@ -63,12 +65,11 @@ def test_parse_args_long():
         ]
     )
     assert vars(args) == {
-        'zonename': 'hva.nl',
-        'zonefile': '/var/named/hva.nl',
+        'zonename': 'example.com',
+        'zonefile': '/var/named/example.com',
         'verbose': True,
         'quiet': True,
-        'version': False,
-        'nameserver': 'ns.hva.nl',
+        'nameserver': 'ns.example.com',
         'norec': True,
         'ttl': True,
         'ns': True,
@@ -82,19 +83,26 @@ def test_parse_args_pos():
     '''
     args = parse_args(
         [
-            'hva.nl',
-            '/var/named/hva.nl',
+            'example.com',
+            '/var/named/zone/example.com',
         ]
     )
     assert vars(args) == {
-        'zonename': 'hva.nl',
-        'zonefile': '/var/named/hva.nl',
+        'zonename': 'example.com',
+        'zonefile': '/var/named/zone/example.com',
         'verbose': False,
         'quiet': False,
-        'version': False,
         'nameserver': None,
         'norec': False,
         'ttl': False,
         'ns': False,
         'soa': False,
     }
+
+
+def test_main(monkeypatch):
+    monkeypatch.setattr(
+        'sys.argv',
+        ['dnszonetest', 'example.com', '/var/named/zone/example.com'],
+    )
+    assert main() == 0

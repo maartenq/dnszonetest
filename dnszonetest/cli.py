@@ -38,13 +38,21 @@ def setup_logging(verbose):
     root_logger.addHandler(handler)
 
 
-def parse_pcrunner_args(args):
+def parse_args(args):
     '''
     Parse the command-line arguments to dnszonetest.
     '''
     parser = argparse.ArgumentParser(
         prog='dnszonetest',
         description='DNS Zone Test',
+    )
+    parser.add_argument(
+        'zonename',
+        help='zone name',
+    )
+    parser.add_argument(
+        'zonefile',
+        help='zone file',
     )
     parser.add_argument(
         '-v',
@@ -100,7 +108,7 @@ def main():
     Entry point for the package defined in setup.py.
     '''
     # Parse args
-    args = parse_pcrunner_args(sys.argv[1:])
+    args = parse_args(sys.argv[1:])
 
     # Version info
     if args.version:

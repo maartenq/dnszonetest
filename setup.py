@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# setup.py
 # -*- coding: utf-8 -*-
 # vim: ai et ts=4 sw=4 sts=4 fenc=UTF-8 ft=python
 
@@ -46,7 +47,7 @@ test_requirements = [
 setup(
     name='dnszonetest',
     version=version,
-    description='Dnszonetest tests a DNS zone file agaist a given name '
+    description='DNS Zone Test tests a DNS zone file agaist a given name '
     'server.',
     long_description=readme + '\n\n' + history,
     author='Maarten Diemel',

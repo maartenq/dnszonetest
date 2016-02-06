@@ -1,6 +1,6 @@
-===============================
+=============
 DNS Zone Test
-===============================
+=============
 
 .. image:: https://badge.fury.io/py/dnszonetest.svg
     :target: http://badge.fury.io/py/dnszonetest
@@ -15,7 +15,7 @@ DNS Zone Test
         :target: https://codecov.io/github/maartenq/dnszonetest?branch=master
 
 
-Dnszonetest tests a DNS zone file agaist a given name server.
+Dns Zone Test tests a DNS zone file agaist a given name server.
 
 * Free software: `ISC license`_
 * Documentation: https://dnszonetest.readthedocs.org.
@@ -32,8 +32,8 @@ Features
 Credits
 ---------
 
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+This package was created with Cookiecutter_ and the `maartenq/cookiecutter-pypackage`_ project template.
 
 .. _`ISC license`: https://opensource.org/licenses/ISC
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+.. _`maartenq/cookiecutter-pypackage`: https://github.com/maartenq/cookiecutter-pypackage

@@ -1,5 +1,6 @@
-# Config file for automatic testing at travis-ci.org
-# vim: ai et ts=2 sw=2 sts=2 ft=yaml fenc=UTF-8
+# .travis.yml
+# -*- coding: utf-8 -*-
+# vim: ai et sw=2 ts=2 sts=2 fenc=UTF-8 ft=yaml
 
 sudo: false
 language: python

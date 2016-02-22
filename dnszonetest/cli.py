@@ -16,6 +16,7 @@ import logging
 import logging.handlers
 import sys
 
+from dnszonetest.main import dnszonetest
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,10 @@ def setup_logging(verbose, quiet):
     logger.setLevel(logging.DEBUG)
     # Console handler
     console_handler = logging.StreamHandler()
-    console_handler.setFormatter(logging.Formatter(fmt='%(message)s',))
+    console_handler.setFormatter(
+        logging.Formatter(fmt='%(levelname)-10s%(message)s',)
+        # logging.Formatter(fmt='%(message)s',)
+    )
     if verbose:
         log_level = logging.INFO
     elif quiet:
@@ -58,6 +62,11 @@ def parse_args(args):
         help='zone file',
     )
     parser.add_argument(
+        '-d',
+        '--nameserver',
+        help='DNS server to query.',
+    )
+    parser.add_argument(
         '-v',
         '--verbose',
         action='store_true',
@@ -68,11 +77,6 @@ def parse_args(args):
         '--quiet',
         action='store_true',
         help='No output.',
-    )
-    parser.add_argument(
-        '-d',
-        '--nameserver',
-        help='DNS server to query.',
     )
     parser.add_argument(
         '-r',
@@ -110,7 +114,14 @@ def main():
     # Setup basic logging
     setup_logging(args.verbose, args.quiet)
     logger.debug('Arguments: %s', args)
-    return 0
-
-if __name__ == '__main__':
-    main()
+    return dnszonetest(
+        args.zonename,
+        args.zonefile,
+        nameserver=args.nameserver,
+        verbose=args.verbose,
+        quiet=args.quiet,
+        norec=args.norec,
+        ttl=args.ttl,
+        ns=args.ns,
+        soa=args.soa,
+    )

@@ -9,6 +9,11 @@ from setuptools.command.test import test as TestCommand
 
 version = '0.2.3'
 
+if sys.version_info < (3,):
+    dnspython = 'dnspython'
+else:
+    dnspython = 'dnspython3'
+
 
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', 'Arguments to pass to py.test')]
@@ -36,7 +41,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-   'dnspython',
+   dnspython,
 ]
 
 test_requirements = [

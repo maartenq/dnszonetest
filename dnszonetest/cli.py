@@ -22,6 +22,12 @@ logger = logging.getLogger(__name__)
 
 
 def setup_logging(verbose, quiet):
+    '''
+    Sets up logging.
+
+    :param bool verbose: verbose output.
+    :param bool quiet: suppress output.
+    '''
     # Root logger
     logger = logging.getLogger()
     # Clear all handlers
@@ -48,6 +54,11 @@ def setup_logging(verbose, quiet):
 def parse_args(args):
     '''
     Parse the command-line arguments to dnszonetest.
+
+    :param list args: list of arguments (example: sys.argv[1:])
+
+    :returns: argparse.Namespace
+    :rtype: argparse.Namespace
     '''
     parser = argparse.ArgumentParser(
         prog='dnszonetest',
@@ -108,6 +119,10 @@ def parse_args(args):
 def main():
     '''
     Entry point for the package defined in setup.py.
+
+    :returns: 0 when records from zone file correctly resolve against
+        nameserver, 2 when not, 3 on errors.
+    :rtype: int
     '''
     # Parse args
     args = parse_args(sys.argv[1:])

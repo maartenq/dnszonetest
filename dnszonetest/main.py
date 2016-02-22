@@ -11,6 +11,7 @@ Main dnszonetest
 
 from __future__ import print_function
 from __future__ import unicode_literals
+
 import logging
 import socket
 
@@ -54,6 +55,7 @@ def get_resolver(nameserver):
 def get_name_rdatasets(zonename, zonefile):
     '''
     Reads records from zone file.
+
     :param str zonename: Zone name.
     :param str zonefile: Zone file name.
     :returns: generator which yields (name, rdataset) tuples for all rdatasets
@@ -70,6 +72,7 @@ def dnszonetest(zonename, zonefile, nameserver=None, verbose=False,
                 quiet=False, norec=False, ttl=False, ns=False, soa=False):
     '''
     API equivalent to using dnszonetest at the command line.
+
     :param str zonename: Zone name.
     :param str zonefile: Zone file name.
     :param bool nameserver: name server to use.

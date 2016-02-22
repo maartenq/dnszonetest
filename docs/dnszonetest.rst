@@ -12,6 +12,22 @@ dnszonetest.cli module
     :undoc-members:
     :show-inheritance:
 
+dnszonetest.exceptions module
+-----------------------------
+
+.. automodule:: dnszonetest.exceptions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+dnszonetest.main module
+-----------------------
+
+.. automodule:: dnszonetest.main
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

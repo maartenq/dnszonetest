@@ -8,9 +8,24 @@ import pytest
 import io
 import dns.name
 import dns.rdataset
+import dns.resolver
 
+from dnszonetest.main import get_resolver
 from dnszonetest.main import get_name_rdatasets
 from dnszonetest.exceptions import NoZoneFileException
+
+
+def test_get_resolver_return_resolver_with_given_nameserver():
+    resolver = get_resolver('google-public-dns-a.google.com')
+    assert isinstance(resolver, dns.resolver.Resolver)
+    assert resolver.nameservers == ['8.8.8.8']
+
+
+def test_get_resolver_return_resolver_with_no_given_nameserver():
+    resolver = get_resolver(None)
+    assert isinstance(resolver, dns.resolver.Resolver)
+    assert resolver.nameservers == \
+        dns.resolver.get_default_resolver().nameservers
 
 
 @pytest.fixture()

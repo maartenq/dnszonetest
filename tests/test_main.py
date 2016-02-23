@@ -12,7 +12,10 @@ import dns.resolver
 
 from dnszonetest.main import get_resolver
 from dnszonetest.main import get_name_rdatasets
-from dnszonetest.exceptions import NoZoneFileException
+from dnszonetest.exceptions import (
+    NoZoneFileException,
+    UnableToResolveNameServerException
+)
 
 
 def test_get_resolver_return_resolver_with_given_nameserver():
@@ -26,6 +29,15 @@ def test_get_resolver_return_resolver_with_no_given_nameserver():
     assert isinstance(resolver, dns.resolver.Resolver)
     assert resolver.nameservers == \
         dns.resolver.get_default_resolver().nameservers
+
+
+def test_get_resolver_raises_UnableToResolveNameServerException():
+    '''
+    test if get_resolver('non.existing.nameserver') raises
+    UnableToResolveNameServerException
+    '''
+    with pytest.raises(UnableToResolveNameServerException):
+        get_resolver('non.existing.nameserver')
 
 
 @pytest.fixture()

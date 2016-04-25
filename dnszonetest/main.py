@@ -17,7 +17,6 @@ import socket
 
 import dns.resolver
 import dns.zone
-
 from dnszonetest.exceptions import (
     UnableToResolveNameServerException,
     NoZoneFileException,
@@ -68,6 +67,24 @@ def get_name_rdatasets(zonename, zonefile):
     return zone.iterate_rdatasets()
 
 
+def testrecord(resolver, name, rdataset):
+    ttl_match = False
+    rdataset_match = False
+    logger.info(
+        'name: {0}\tradataset: {1}'.format(name, rdataset)
+    )
+    try:
+        answer = resolver.query(name, rdataset.rdtype, rdataset.rdclass)
+    except dns.resolver.NXDOMAIN:
+        logger.info('NXDOMAIN')
+    else:
+        result = answer.rrset.to_rdataset()
+        logger.info('query result: {0}'.format(result))
+        rdataset_match = rdataset == result
+        ttl_match = rdataset.ttl == result.ttl
+    return rdataset_match, ttl_match
+
+
 def dnszonetest(zonename, zonefile, nameserver=None, verbose=False,
                 quiet=False, norec=False, ttl=False, ns=False, soa=False):
     '''
@@ -106,5 +123,7 @@ def dnszonetest(zonename, zonefile, nameserver=None, verbose=False,
         logger.error(err)
         return 3
     for name, rdataset in name_rdatasets:
-        print('name: {0}\nradataset: {1}'.format(name, rdataset))
+        rdataset_match, ttl_match = testrecord(resolver, name, rdataset)
+        logger.info('Record matches: {0}'.format(rdataset_match))
+        logger.info('TTL matches: {0}'.format(ttl_match))
     return 0

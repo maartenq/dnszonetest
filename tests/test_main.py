@@ -12,6 +12,7 @@ import dns.resolver
 
 from dnszonetest.main import get_resolver
 from dnszonetest.main import get_name_rdatasets
+from dnszonetest.main import chkrecord
 from dnszonetest.exceptions import (
     NoZoneFileException,
     UnableToResolveNameServerException
@@ -72,7 +73,7 @@ mail3         IN  A     192.0.2.5''')
 
 def test_get_name_rdatasets_returns_name_and_rdatasets(zonefile):
     '''
-    test if get_name_rdatasets(zonename, zonefile) returns
+    Test if get_name_rdatasets(zonename, zonefile) returns
     dns.name.Name and dns.rdataset.Rdataset.
     '''
     name_rdatasets = get_name_rdatasets('example.com', zonefile)
@@ -83,7 +84,78 @@ def test_get_name_rdatasets_returns_name_and_rdatasets(zonefile):
 
 def test_get_name_rdatasets_raises_NoZoneFileException():
     '''
-    test if get_name_rdatasets(zonename, zonefile) raises NoZoneFileException
+    Test if get_name_rdatasets(zonename, zonefile) raises NoZoneFileException
     '''
     with pytest.raises(NoZoneFileException):
         get_name_rdatasets('example.com', '/path/to/non/existing/file')
+
+
+@pytest.mark.parametrize(
+    ('input_rdataset', 'input_rdataset_answer', 'expected'),
+    [
+        (
+            (1, 1, 28800, b'192.0.2.1'),
+            (1, 1, 28800, b'192.0.2.1'),
+            (True, True),
+        ),
+        (
+            (1, 1, 28800, b'192.0.2.1'),
+            (1, 1, 28800, b'192.0.2.2'),
+            (False, True),
+        ),
+        (
+            (1, 1, 28800, b'192.0.2.1'),
+            (1, 1, 100, b'192.0.2.1'),
+            (True, False),
+        ),
+        (
+            (1, 1, 28800, b'192.0.2.1'),
+            (1, 1, 100, b'192.0.2.2'),
+            (False, False),
+        ),
+    ]
+)
+def test_chkrecord(input_rdataset, input_rdataset_answer, expected):
+    '''
+    Test if chkrecord(resolver, name, rdataset) returns matching rdatasets and
+    ttl.
+    '''
+    class Rrset(object):
+        def __init__(self, answer):
+            self.answer = answer
+
+        def to_rdataset(self):
+            return dns.rdataset.from_text(*self.answer)
+
+    class Answer(object):
+        def __init__(self, answer):
+            self.rrset = Rrset(answer)
+
+    class Resolver(object):
+        def __init__(self, answer):
+            self.answer = answer
+
+        def query(self, name, rdtype, rdclass):
+            return Answer(self.answer)
+
+    assert chkrecord(
+        Resolver(input_rdataset_answer),
+        'example.com',
+        dns.rdataset.from_text(*input_rdataset)
+    ) == expected
+
+
+def test_chkrecord_returns_when_NXDOMAIN():
+    '''
+    Test if chkrecord(resolver, name, rdataset) returns (False, False) when
+    query raises NXDOMAIN.
+    '''
+    class Resolver(object):
+        def query(self, name, rdtype, rdclass):
+            raise dns.resolver.NXDOMAIN
+
+    assert chkrecord(
+        Resolver(),
+        'example.com',
+        dns.rdataset.from_text(1, 1, 28800, b'192.0.2.1'),
+    ) == (False, False)

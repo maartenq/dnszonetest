@@ -67,7 +67,16 @@ def get_name_rdatasets(zonename, zonefile):
     return zone.iterate_rdatasets()
 
 
-def testrecord(resolver, name, rdataset):
+def chkrecord(resolver, name, rdataset):
+    '''
+    Compares resolved rdataset from name with given resolver and given
+    rdataset.
+
+    :param instance Resolver: Zone name.
+    :param str name: DNS name
+    :returns: tuple of booleans
+    :rtype: tuple
+    '''
     ttl_match = False
     rdataset_match = False
     logger.info(
@@ -123,7 +132,7 @@ def dnszonetest(zonename, zonefile, nameserver=None, verbose=False,
         logger.error(err)
         return 3
     for name, rdataset in name_rdatasets:
-        rdataset_match, ttl_match = testrecord(resolver, name, rdataset)
+        rdataset_match, ttl_match = chkrecord(resolver, name, rdataset)
         logger.info('Record matches: {0}'.format(rdataset_match))
         logger.info('TTL matches: {0}'.format(ttl_match))
     return 0

@@ -4,8 +4,9 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
-import pytest
 import io
+import pytest
+import six
 import dns.name
 import dns.rdataset
 import dns.resolver
@@ -17,6 +18,13 @@ from dnszonetest.exceptions import (
     NoZoneFileException,
     UnableToResolveNameServerException
 )
+
+if six.PY2:
+    ip_192_0_2_1 = b'192.0.2.1'
+    ip_192_0_2_2 = b'192.0.2.2'
+else:
+    ip_192_0_2_1 = '192.0.2.1'
+    ip_192_0_2_2 = '192.0.2.2'
 
 
 def test_get_resolver_return_resolver_with_given_nameserver():
@@ -94,23 +102,23 @@ def test_get_name_rdatasets_raises_NoZoneFileException():
     ('input_rdataset', 'input_rdataset_answer', 'expected'),
     [
         (
-            (1, 1, 28800, b'192.0.2.1'),
-            (1, 1, 28800, b'192.0.2.1'),
+            (1, 1, 28800, ip_192_0_2_1),
+            (1, 1, 28800, ip_192_0_2_1),
             (True, True),
         ),
         (
-            (1, 1, 28800, b'192.0.2.1'),
-            (1, 1, 28800, b'192.0.2.2'),
+            (1, 1, 28800, ip_192_0_2_1),
+            (1, 1, 28800, ip_192_0_2_2),
             (False, True),
         ),
         (
-            (1, 1, 28800, b'192.0.2.1'),
-            (1, 1, 100, b'192.0.2.1'),
+            (1, 1, 28800, ip_192_0_2_1),
+            (1, 1, 100, ip_192_0_2_1),
             (True, False),
         ),
         (
-            (1, 1, 28800, b'192.0.2.1'),
-            (1, 1, 100, b'192.0.2.2'),
+            (1, 1, 28800, ip_192_0_2_1),
+            (1, 1, 100, ip_192_0_2_2),
             (False, False),
         ),
     ]
@@ -157,5 +165,5 @@ def test_chkrecord_returns_when_NXDOMAIN():
     assert chkrecord(
         Resolver(),
         'example.com',
-        dns.rdataset.from_text(1, 1, 28800, b'192.0.2.1'),
+        dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1),
     ) == (False, False)

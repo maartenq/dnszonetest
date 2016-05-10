@@ -177,10 +177,6 @@ def test_dzt_query(dzt, monkeypatch):
 def test_dzt_query_no_result(dzt, monkeypatch):
     rdataset = dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1)
 
-    class Answer(object):
-        def to_rdataset(self):
-            return rdataset
-
     class Result(object):
         def __init__(self):
             self.answer = []

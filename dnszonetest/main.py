@@ -135,7 +135,7 @@ class DnsZoneTest(object):
             record.rdataset_query = result.answer[0].to_rdataset()
         except IndexError:
             logger.info('No result for: %s', record.name)
-        logger.info('query result: {0}'.format(record.rdataset_query))
+        logger.info('query result: %s', record.rdataset_query)
 
     def compare_rdatasets(self):
         for name, rdataset_file in self.zone_from_file.iterate_rdatasets():

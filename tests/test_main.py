@@ -110,27 +110,33 @@ def dzt_ns(zonefile):
                        'google-public-dns-a.google.com')
 
 
-def test_dzt_get_resolver_return_resolver_with_no_given_nameserver(dzt):
-    dzt.get_resolver()
-    assert isinstance(dzt.resolver, dns.resolver.Resolver)
-    assert dzt.resolver.nameservers ==  \
-        dns.resolver.get_default_resolver().nameservers
+def test_dzt_get_nameserver_ip_without_given_nameserver(dzt, monkeypatch):
+    class GetDefaultResolverMock(object):
+        def __init__(self):
+            self.nameservers = ['192.0.2.1']
+
+    monkeypatch.setattr(
+        dns.resolver,
+        'get_default_resolver',
+        GetDefaultResolverMock
+    )
+    dzt.get_nameserver_ip()
+    assert dzt.nameserver_ip == '192.0.2.1'
 
 
-def test_dzt_get_resolver_return_resolver_with_given_nameserver(dzt_ns):
-    dzt_ns.get_resolver()
-    assert isinstance(dzt_ns.resolver, dns.resolver.Resolver)
-    assert dzt_ns.resolver.nameservers == ['8.8.8.8']
+def test_dzt_get_nameserver_ip_with_given_nameserver(dzt_ns):
+    dzt_ns.get_nameserver_ip()
+    assert dzt_ns.nameserver_ip == '8.8.8.8'
 
 
-def test_get_resolver_raises_UnableToResolveNameServerException():
+def test_get_nameserver_ip_raises_UnableToResolveNameServerException():
     '''
-    test if get_resolver('non.existing.nameserver') raises
+    test if get_nameserver_ip('non.existing.nameserver') raises
     UnableToResolveNameServerException
     '''
     dzt = DnsZoneTest('example.com', 'example.com', 'non.existing.nameserver')
     with pytest.raises(UnableToResolveNameServerException):
-        dzt.get_resolver()
+        dzt.get_nameserver_ip()
 
 
 def test_dzt_get_zone_from_file(dzt):
@@ -145,38 +151,49 @@ def test_dzt_get_zone_from_file_raises_NoZoneFileException():
 
 
 def test_dzt_query(dzt, monkeypatch):
-    class Rrset(object):
-        def __init__(self, answer):
-            self.answer = answer
-
-        def to_rdataset(self):
-            return dns.rdataset.from_text(*self.answer)
+    rdataset = dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1)
 
     class Answer(object):
-        def __init__(self, answer):
-            self.rrset = Rrset(answer)
+        def to_rdataset(self):
+            return rdataset
 
-    class Resolver(object):
-        def __init__(self, answer):
-            self.answer = answer
+    class Result(object):
+        def __init__(self):
+            self.answer = [Answer()]
 
-        def query(self, name, rdtype, rdclass):
-            return Answer(self.answer)
+    def udp_mock(query_message, nameserver):
+        return Result()
 
-    rdataset = (1, 1, 28800, ip_192_0_2_1)
-    record = Record('example.com', dns.rdataset.from_text(*rdataset))
-    monkeypatch.setattr(dzt, 'resolver', Resolver(rdataset))
+    monkeypatch.setattr(
+        dns.query,
+        'udp',
+        udp_mock
+    )
+    record = Record('example.com', rdataset)
     dzt.query(record)
-    assert record.rdataset_query == dns.rdataset.from_text(*rdataset)
+    assert record.rdataset_query == rdataset
 
 
-def test_dzt_query_raise_NXDOMAIN(dzt, monkeypatch):
-    class Resolver(object):
-        def query(self, name, rdtype, rdclass):
-            raise dns.resolver.NXDOMAIN
+def test_dzt_query_no_result(dzt, monkeypatch):
+    rdataset = dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1)
 
-    rdataset = (1, 1, 28800, ip_192_0_2_1)
-    record = Record('example.com', dns.rdataset.from_text(*rdataset))
-    monkeypatch.setattr(dzt, 'resolver', Resolver())
+    class Answer(object):
+        def to_rdataset(self):
+            return rdataset
+
+    class Result(object):
+        def __init__(self):
+            self.answer = []
+
+    def udp_mock(query_message, nameserver):
+        return Result()
+
+    monkeypatch.setattr(
+        dns.query,
+        'udp',
+        udp_mock
+    )
+
+    record = Record('example.com', rdataset)
     dzt.query(record)
     assert record.rdataset_query is None

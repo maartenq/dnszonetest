@@ -15,10 +15,13 @@ from __future__ import unicode_literals
 import logging
 import socket
 
+import dns.flags
+import dns.message
+import dns.query
+import dns.rdatatype
 import dns.resolver
 import dns.zone
-import dns.rdatatype
-import dns.flags
+
 from dnszonetest.exceptions import (
     UnableToResolveNameServerException,
     NoZoneFileException,
@@ -77,28 +80,25 @@ class DnsZoneTest(object):
         self.compare_ttl = compare_ttl
         self.compare_ns = compare_ns
         self.compare_soa = compare_soa
-        self.resolver = None
+        self.nameserver_ip = None
         self.zone_from_file = None
         self.mismatch_ttl = 0
         self.mismatch_rdataset = 0
         self.errno = 3
 
-    def get_resolver(self):
+    def get_nameserver_ip(self):
         '''
         Get Resolver object depending on self.nameserver
         '''
         if self.nameserver is None:
             logger.info('Get IP number(s) of system resolvers')
-            self.resolver = dns.resolver.get_default_resolver()
+            self.nameserver_ip = \
+                dns.resolver.get_default_resolver().nameservers[0]
         else:
-            logger.info(
-                'Get IP number(s) of name server %s',
-                self.nameserver
-            )
-            self.resolver = dns.resolver.Resolver(configure=False)
+            logger.info('Get IP number of name server %s', self.nameserver_ip)
             try:
-                nameserver_ips = socket.gethostbyname_ex(
-                    self.nameserver)[2]
+                self.nameserver_ip = socket.gethostbyname_ex(
+                    self.nameserver)[2][0]
             except socket.gaierror as err:
                 raise UnableToResolveNameServerException(
                     'Unable to resolve nameserver "{0}". {1}'.format(
@@ -106,12 +106,7 @@ class DnsZoneTest(object):
                         err
                     )
                 )
-            else:
-                self.resolver = dns.resolver.Resolver(configure=False)
-                self.resolver.nameservers = nameserver_ips
-                if self.no_recursion:
-                    self.resolver.set_flags(dns.flags.RD)
-        logger.info('name server IP(s): {0}'.format(self.resolver.nameservers))
+        logger.info('name server IP: %s', self.nameserver_ip)
 
     def get_zone_from_file(self):
         '''
@@ -129,17 +124,18 @@ class DnsZoneTest(object):
             )
 
     def query(self, record):
+        query_message = dns.message.make_query(
+            record.name,
+            record.rdataset_file.rdtype
+        )
+        if self.no_recursion:
+            query_message.flags ^= dns.flags.RD
+        result = dns.query.udp(query_message, self.nameserver_ip)
         try:
-            answer = self.resolver.query(
-                record.name,
-                record.rdataset_file.rdtype,
-                record.rdataset_file.rdclass
-            )
-        except dns.resolver.NXDOMAIN:
-            logger.info('NXDOMAIN')
-        else:
-            record.rdataset_query = answer.rrset.to_rdataset()
-            logger.info('query result: {0}'.format(record.rdataset_query))
+            record.rdataset_query = result.answer[0].to_rdataset()
+        except IndexError:
+            logger.info('No result for: %s', record.name)
+        logger.info('query result: {0}'.format(record.rdataset_query))
 
     def compare_rdatasets(self):
         for name, rdataset_file in self.zone_from_file.iterate_rdatasets():
@@ -182,6 +178,6 @@ class DnsZoneTest(object):
             self.errno = 0
 
     def compare(self):
-        self.get_resolver()
+        self.get_nameserver_ip()
         self.get_zone_from_file()
         self.compare_rdatasets()

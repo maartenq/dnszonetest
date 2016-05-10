@@ -40,10 +40,10 @@ def test_parse_args_short():
         'verbose': True,
         'quiet': True,
         'nameserver': 'ns.example.com',
-        'norec': True,
-        'ttl': True,
-        'ns': True,
-        'soa': True
+        'no_recursion': True,
+        'compare_ttl': True,
+        'compare_ns': True,
+        'compare_soa': True
     }
 
 
@@ -70,10 +70,10 @@ def test_parse_args_long():
         'verbose': True,
         'quiet': True,
         'nameserver': 'ns.example.com',
-        'norec': True,
-        'ttl': True,
-        'ns': True,
-        'soa': True
+        'no_recursion': True,
+        'compare_ttl': True,
+        'compare_ns': True,
+        'compare_soa': True
     }
 
 
@@ -93,10 +93,10 @@ def test_parse_args_pos():
         'verbose': False,
         'quiet': False,
         'nameserver': None,
-        'norec': False,
-        'ttl': False,
-        'ns': False,
-        'soa': False,
+        'no_recursion': False,
+        'compare_ttl': False,
+        'compare_ns': False,
+        'compare_soa': False,
     }
 
 

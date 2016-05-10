@@ -6,20 +6,20 @@ from __future__ import print_function
 from __future__ import unicode_literals
 import io
 import pytest
-import six
 import dns.name
 import dns.rdataset
 import dns.resolver
-
-from dnszonetest.main import get_resolver
-from dnszonetest.main import get_name_rdatasets
-from dnszonetest.main import chkrecord
+import dns.zone
+import sys
+from dnszonetest.main import DnsZoneTest
+from dnszonetest.main import Record
 from dnszonetest.exceptions import (
     NoZoneFileException,
     UnableToResolveNameServerException
 )
 
-if six.PY2:
+
+if sys.version_info < (3,):
     ip_192_0_2_1 = b'192.0.2.1'
     ip_192_0_2_2 = b'192.0.2.2'
 else:
@@ -27,29 +27,43 @@ else:
     ip_192_0_2_2 = '192.0.2.2'
 
 
-def test_get_resolver_return_resolver_with_given_nameserver():
-    resolver = get_resolver('google-public-dns-a.google.com')
-    assert isinstance(resolver, dns.resolver.Resolver)
-    assert resolver.nameservers == ['8.8.8.8']
+@pytest.mark.parametrize(
+    ('rdataset_file', 'rdataset_query', 'rdataset_match', 'ttl_match'),
+    [
+        (
+            (1, 1, 28800, ip_192_0_2_1),
+            (1, 1, 28800, ip_192_0_2_1),
+            True,
+            True,
+        ),
+        (
+            (1, 1, 28800, ip_192_0_2_1),
+            (1, 1, 28800, ip_192_0_2_2),
+            False,
+            True,
+        ),
+        (
+            (1, 1, 28800, ip_192_0_2_1),
+            (1, 1, 100, ip_192_0_2_1),
+            True,
+            False,
+        ),
+        (
+            (1, 1, 28800, ip_192_0_2_1),
+            (1, 1, 100, ip_192_0_2_2),
+            False,
+            False,
+        ),
+    ]
+)
+def test_record(rdataset_file, rdataset_query, rdataset_match, ttl_match):
+    record = Record('www.example.com', dns.rdataset.from_text(*rdataset_file))
+    record.rdataset_query = dns.rdataset.from_text(*rdataset_query)
+    assert record.rdataset_match is rdataset_match
+    assert record.ttl_match is ttl_match
 
 
-def test_get_resolver_return_resolver_with_no_given_nameserver():
-    resolver = get_resolver(None)
-    assert isinstance(resolver, dns.resolver.Resolver)
-    assert resolver.nameservers == \
-        dns.resolver.get_default_resolver().nameservers
-
-
-def test_get_resolver_raises_UnableToResolveNameServerException():
-    '''
-    test if get_resolver('non.existing.nameserver') raises
-    UnableToResolveNameServerException
-    '''
-    with pytest.raises(UnableToResolveNameServerException):
-        get_resolver('non.existing.nameserver')
-
-
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def zonefile(tmpdir_factory):
     zonefile = tmpdir_factory.mktemp('data').join('example.com')
     with io.open(str(zonefile), 'w', encoding='utf-8') as fh:
@@ -79,55 +93,58 @@ mail3         IN  A     192.0.2.5''')
     return str(zonefile)
 
 
-def test_get_name_rdatasets_returns_name_and_rdatasets(zonefile):
+@pytest.fixture(scope='module')
+def dzt(zonefile):
     '''
-    Test if get_name_rdatasets(zonename, zonefile) returns
-    dns.name.Name and dns.rdataset.Rdataset.
+    DnsZoneTest instance with no given nameserver.
     '''
-    name_rdatasets = get_name_rdatasets('example.com', zonefile)
-    for name, rdataset in name_rdatasets:
-        assert isinstance(name, dns.name.Name)
-        assert isinstance(rdataset, dns.rdataset.Rdataset)
+    return DnsZoneTest('example.com', zonefile)
 
 
-def test_get_name_rdatasets_raises_NoZoneFileException():
+@pytest.fixture(scope='module')
+def dzt_ns(zonefile):
     '''
-    Test if get_name_rdatasets(zonename, zonefile) raises NoZoneFileException
+    DnsZoneTest instance with given nameserver.
     '''
+    return DnsZoneTest('example.com', zonefile,
+                       'google-public-dns-a.google.com')
+
+
+def test_dzt_get_resolver_return_resolver_with_no_given_nameserver(dzt):
+    dzt.get_resolver()
+    assert isinstance(dzt.resolver, dns.resolver.Resolver)
+    assert dzt.resolver.nameservers ==  \
+        dns.resolver.get_default_resolver().nameservers
+
+
+def test_dzt_get_resolver_return_resolver_with_given_nameserver(dzt_ns):
+    dzt_ns.get_resolver()
+    assert isinstance(dzt_ns.resolver, dns.resolver.Resolver)
+    assert dzt_ns.resolver.nameservers == ['8.8.8.8']
+
+
+def test_get_resolver_raises_UnableToResolveNameServerException():
+    '''
+    test if get_resolver('non.existing.nameserver') raises
+    UnableToResolveNameServerException
+    '''
+    dzt = DnsZoneTest('example.com', 'example.com', 'non.existing.nameserver')
+    with pytest.raises(UnableToResolveNameServerException):
+        dzt.get_resolver()
+
+
+def test_dzt_get_zone_from_file(dzt):
+    dzt.get_zone_from_file()
+    assert isinstance(dzt.zone_from_file, dns.zone.Zone)
+
+
+def test_dzt_get_zone_from_file_raises_NoZoneFileException():
+    dzt = DnsZoneTest('example.com', '/path/to/non/existing/zone/file')
     with pytest.raises(NoZoneFileException):
-        get_name_rdatasets('example.com', '/path/to/non/existing/file')
+        dzt.get_zone_from_file()
 
 
-@pytest.mark.parametrize(
-    ('input_rdataset', 'input_rdataset_answer', 'expected'),
-    [
-        (
-            (1, 1, 28800, ip_192_0_2_1),
-            (1, 1, 28800, ip_192_0_2_1),
-            (True, True),
-        ),
-        (
-            (1, 1, 28800, ip_192_0_2_1),
-            (1, 1, 28800, ip_192_0_2_2),
-            (False, True),
-        ),
-        (
-            (1, 1, 28800, ip_192_0_2_1),
-            (1, 1, 100, ip_192_0_2_1),
-            (True, False),
-        ),
-        (
-            (1, 1, 28800, ip_192_0_2_1),
-            (1, 1, 100, ip_192_0_2_2),
-            (False, False),
-        ),
-    ]
-)
-def test_chkrecord(input_rdataset, input_rdataset_answer, expected):
-    '''
-    Test if chkrecord(resolver, name, rdataset) returns matching rdatasets and
-    ttl.
-    '''
+def test_dzt_query(dzt, monkeypatch):
     class Rrset(object):
         def __init__(self, answer):
             self.answer = answer
@@ -146,24 +163,20 @@ def test_chkrecord(input_rdataset, input_rdataset_answer, expected):
         def query(self, name, rdtype, rdclass):
             return Answer(self.answer)
 
-    assert chkrecord(
-        Resolver(input_rdataset_answer),
-        'example.com',
-        dns.rdataset.from_text(*input_rdataset)
-    ) == expected
+    rdataset = (1, 1, 28800, ip_192_0_2_1)
+    record = Record('example.com', dns.rdataset.from_text(*rdataset))
+    monkeypatch.setattr(dzt, 'resolver', Resolver(rdataset))
+    dzt.query(record)
+    assert record.rdataset_query == dns.rdataset.from_text(*rdataset)
 
 
-def test_chkrecord_returns_when_NXDOMAIN():
-    '''
-    Test if chkrecord(resolver, name, rdataset) returns (False, False) when
-    query raises NXDOMAIN.
-    '''
+def test_dzt_query_raise_NXDOMAIN(dzt, monkeypatch):
     class Resolver(object):
         def query(self, name, rdtype, rdclass):
             raise dns.resolver.NXDOMAIN
 
-    assert chkrecord(
-        Resolver(),
-        'example.com',
-        dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1),
-    ) == (False, False)
+    rdataset = (1, 1, 28800, ip_192_0_2_1)
+    record = Record('example.com', dns.rdataset.from_text(*rdataset))
+    monkeypatch.setattr(dzt, 'resolver', Resolver())
+    dzt.query(record)
+    assert record.rdataset_query is None

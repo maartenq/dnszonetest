@@ -16,7 +16,7 @@ import logging
 import logging.handlers
 import sys
 
-from dnszonetest.main import dnszonetest
+from dnszonetest.main import DnsZoneTest
 
 logger = logging.getLogger(__name__)
 
@@ -93,24 +93,28 @@ def parse_args(args):
         '-r',
         '--norec',
         action='store_true',
+        dest='no_recursion',
         help='Set No Recursion flag.',
     )
     parser.add_argument(
         '-t',
         '--ttl',
         action='store_true',
+        dest='compare_ttl',
         help='Compare TTL values.',
     )
     parser.add_argument(
         '-n',
         '--ns',
         action='store_true',
+        dest='compare_ns',
         help='Compare NS records.',
     )
     parser.add_argument(
         '-s',
         '--soa',
         action='store_true',
+        dest='compare_soa',
         help='Compare SOA records.',
     )
     return parser.parse_args(args)
@@ -129,14 +133,16 @@ def main():
     # Setup basic logging
     setup_logging(args.verbose, args.quiet)
     logger.debug('Arguments: %s', args)
-    return dnszonetest(
+    dnszonetest = DnsZoneTest(
         args.zonename,
         args.zonefile,
         nameserver=args.nameserver,
         verbose=args.verbose,
         quiet=args.quiet,
-        norec=args.norec,
-        ttl=args.ttl,
-        ns=args.ns,
-        soa=args.soa,
+        no_recursion=args.no_recursion,
+        compare_ttl=args.compare_ttl,
+        compare_ns=args.compare_ns,
+        compare_soa=args.compare_soa,
     )
+    dnszonetest.compare()
+    return dnszonetest.errno

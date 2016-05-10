@@ -5,7 +5,6 @@
 
 import sys
 from setuptools import setup
-from setuptools.command.test import test as TestCommand
 
 version = '0.2.3'
 
@@ -13,26 +12,6 @@ if sys.version_info < (3,):
     dnspython = 'dnspython'
 else:
     dnspython = 'dnspython3'
-
-
-class PyTest(TestCommand):
-    user_options = [('pytest-args=', 'a', 'Arguments to pass to py.test')]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = []
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        # import here, cause outside the eggs aren't loaded
-        import pytest
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
-
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -47,6 +26,10 @@ requirements = [
 test_requirements = [
     'pytest',
     'tox',
+]
+
+setup_requirements = [
+    'pytest-runner',
 ]
 
 setup(
@@ -87,6 +70,6 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
     test_suite='tests',
-    cmdclass={'test': PyTest},
-    tests_require=test_requirements
+    tests_require=test_requirements,
+    setup_requires=setup_requirements,
 )

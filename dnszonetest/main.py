@@ -78,9 +78,6 @@ class Record(object):
 class DnsZoneTest(object):
     '''
     API equivalent to using dnszonetest at the command line.
-
-    :returns: 0 when records from zone file correctly resolve against
-        nameserver, 2 when not, 3 on errors.
     '''
     def __init__(self, zonename, zonefile, nameserver=None, verbose=False,
                  quiet=False, no_recursion=False, compare_ttl=False,
@@ -162,12 +159,12 @@ class DnsZoneTest(object):
                 if not record.ttl_match:
                     self.mismatch_ttl += 1
                     logger.warning(
-                        '%s TTL: %s',
+                        'RECORD: %s TTL: %s',
                         record.name,
                         record.rdataset_file.ttl
                     )
                     logger.warning(
-                        '%s TTL : %s',
+                        'RECORD: %s TTL : %s',
                         record.name,
                         record.rdataset_query.ttl
                     )

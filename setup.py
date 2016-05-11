@@ -6,7 +6,7 @@
 import sys
 from setuptools import setup
 
-version = '0.2.3'
+version = '0.3.0'
 
 if sys.version_info < (3,):
     dnspython = 'dnspython'

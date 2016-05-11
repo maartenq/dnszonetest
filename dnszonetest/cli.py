@@ -42,11 +42,11 @@ def setup_logging(verbose, quiet):
         # logging.Formatter(fmt='%(message)s',)
     )
     if verbose:
-        log_level = logging.INFO
+        log_level = logging.DEBUG
     elif quiet:
         log_level = logging.CRITICAL
     else:
-        log_level = logging.WARNING
+        log_level = logging.INFO
     console_handler.setLevel(log_level)
     logger.addHandler(console_handler)
 

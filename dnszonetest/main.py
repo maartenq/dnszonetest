@@ -35,6 +35,31 @@ class Record(object):
         self.name = name
         self.rdataset_file = rdataset_file
         self.rdataset_query = None
+        self.query_msg = None
+        self.query_res = None
+
+    def query(self, nameserver_ip, no_recursion):
+        logger.debug('RECORD     : %s', self.name)
+        logger.debug('FROM FILE  : %s', self.rdataset_file)
+        self.query_msg = dns.message.make_query(
+            self.name,
+            self.rdataset_file.rdtype
+        )
+        if no_recursion:
+            self.query_msg.flags ^= dns.flags.RD
+        try:
+            self.query_res = dns.query.udp(
+                self.query_msg,
+                nameserver_ip,
+                timeout=10
+            )
+        except dns.exception.Timeout as err:
+            logger.error('TIMEOUT: %s', err)
+        try:
+            self.rdataset_query = self.query_res.answer[0].to_rdataset()
+            logger.debug('FROM QUERY : %s', self.rdataset_query)
+        except (IndexError, AttributeError):
+            logger.warning('QUERY: %s : NO RESULT', self.name)
 
     @property
     def rdataset_match(self):
@@ -45,7 +70,7 @@ class Record(object):
         try:
             res = self.rdataset_file.ttl == self.rdataset_query.ttl
         except AttributeError as err:
-            logger.info(err)
+            logger.warning(err)
             res = None
         return res
 
@@ -90,12 +115,12 @@ class DnsZoneTest(object):
         '''
         Get Resolver object depending on self.nameserver
         '''
+        logger.info('NAME SERVER: %s', self.nameserver)
         if self.nameserver is None:
             logger.info('Get IP number(s) of system resolvers')
             self.nameserver_ip = \
                 dns.resolver.get_default_resolver().nameservers[0]
         else:
-            logger.info('Get IP number of name server %s', self.nameserver_ip)
             try:
                 self.nameserver_ip = socket.gethostbyname_ex(
                     self.nameserver)[2][0]
@@ -106,7 +131,7 @@ class DnsZoneTest(object):
                         err
                     )
                 )
-        logger.info('name server IP: %s', self.nameserver_ip)
+        logger.info('NAME SERVER IP: %s', self.nameserver_ip)
 
     def get_zone_from_file(self):
         '''
@@ -123,20 +148,6 @@ class DnsZoneTest(object):
                 'Unable to read zone file: {0}'.format(err)
             )
 
-    def query(self, record):
-        query_message = dns.message.make_query(
-            record.name,
-            record.rdataset_file.rdtype
-        )
-        if self.no_recursion:
-            query_message.flags ^= dns.flags.RD
-        result = dns.query.udp(query_message, self.nameserver_ip)
-        try:
-            record.rdataset_query = result.answer[0].to_rdataset()
-        except IndexError:
-            logger.info('No result for: %s', record.name)
-        logger.info('query result: %s', record.rdataset_query)
-
     def compare_rdatasets(self):
         for name, rdataset_file in self.zone_from_file.iterate_rdatasets():
             if not self.compare_ns and \
@@ -146,7 +157,7 @@ class DnsZoneTest(object):
                     rdataset_file.rdtype == dns.rdatatype.SOA:
                 continue
             record = Record(name, rdataset_file)
-            self.query(record)
+            record.query(self.nameserver_ip, self.no_recursion)
             if self.compare_ttl and record.rdataset_query is not None:
                 if not record.ttl_match:
                     self.mismatch_ttl += 1
@@ -163,12 +174,12 @@ class DnsZoneTest(object):
             if not record.rdataset_match:
                 self.mismatch_rdataset += 1
                 logger.warning(
-                    '%s in zonefile: %s',
+                    'RECORD: %s IN ZONEFILE: %s',
                     record.name,
                     record.rdataset_file
                 )
                 logger.warning(
-                    '%s from query : %s',
+                    'RECORD: %s FROM QUERY : %s',
                     record.name,
                     record.rdataset_query
                 )

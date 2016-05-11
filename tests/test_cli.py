@@ -100,20 +100,12 @@ def test_parse_args_pos():
     }
 
 
-# def test_main(monkeypatch):
-#     monkeypatch.setattr(
-#         'sys.argv',
-#         ['dnszonetest', 'example.com', '/var/named/zone/example.com'],
-#     )
-#     assert cli.main() == 0
-
-
 @pytest.mark.parametrize(
-    'verbose,quiet,log_level',
+    ('verbose', 'quiet', 'log_level'),
     [
-        (True, True, logging.INFO),
-        (True, False, logging.INFO),
-        (False, False, logging.WARNING),
+        (True, True, logging.DEBUG),
+        (True, False, logging.DEBUG),
+        (False, False, logging.INFO),
         (False, True, logging.CRITICAL),
 
     ]

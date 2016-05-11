@@ -63,6 +63,75 @@ def test_record(rdataset_file, rdataset_query, rdataset_match, ttl_match):
     assert record.ttl_match is ttl_match
 
 
+def test_record_query(monkeypatch):
+    rdataset = dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1)
+
+    class Answer(object):
+        def to_rdataset(self):
+            return rdataset
+
+    class Result(object):
+        def __init__(self):
+            self.answer = [Answer()]
+
+    def udp_mock(query_message, nameserver, timeout=0):
+        return Result()
+
+    monkeypatch.setattr(
+        dns.query,
+        'udp',
+        udp_mock
+    )
+    record = Record('example.com', rdataset)
+    record.query('192.0.2.2', False)
+    assert record.query_msg.flags == 256
+    assert record.rdataset_query == rdataset
+
+
+def test_record_query_no_recursion(monkeypatch):
+    rdataset = dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1)
+
+    class Answer(object):
+        def to_rdataset(self):
+            return rdataset
+
+    class Result(object):
+        def __init__(self):
+            self.answer = [Answer()]
+
+    def udp_mock(query_message, nameserver, timeout=0):
+        return Result()
+
+    monkeypatch.setattr(
+        dns.query,
+        'udp',
+        udp_mock
+    )
+    record = Record('example.com', rdataset)
+    record.query('192.0.2.2', True)
+    assert record.query_msg.flags == 0
+
+
+def test_dzt_query_no_result(monkeypatch):
+    rdataset = dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1)
+
+    class Result(object):
+        def __init__(self):
+            self.answer = []
+
+    def udp_mock(query_message, nameserver, timeout=0):
+        return Result()
+
+    monkeypatch.setattr(
+        dns.query,
+        'udp',
+        udp_mock
+    )
+    record = Record('example.com', rdataset)
+    record.query('192.0.2.2', False)
+    assert record.rdataset_query is None
+
+
 @pytest.fixture(scope='module')
 def zonefile(tmpdir_factory):
     zonefile = tmpdir_factory.mktemp('data').join('example.com')
@@ -148,48 +217,3 @@ def test_dzt_get_zone_from_file_raises_NoZoneFileException():
     dzt = DnsZoneTest('example.com', '/path/to/non/existing/zone/file')
     with pytest.raises(NoZoneFileException):
         dzt.get_zone_from_file()
-
-
-def test_dzt_query(dzt, monkeypatch):
-    rdataset = dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1)
-
-    class Answer(object):
-        def to_rdataset(self):
-            return rdataset
-
-    class Result(object):
-        def __init__(self):
-            self.answer = [Answer()]
-
-    def udp_mock(query_message, nameserver):
-        return Result()
-
-    monkeypatch.setattr(
-        dns.query,
-        'udp',
-        udp_mock
-    )
-    record = Record('example.com', rdataset)
-    dzt.query(record)
-    assert record.rdataset_query == rdataset
-
-
-def test_dzt_query_no_result(dzt, monkeypatch):
-    rdataset = dns.rdataset.from_text(1, 1, 28800, ip_192_0_2_1)
-
-    class Result(object):
-        def __init__(self):
-            self.answer = []
-
-    def udp_mock(query_message, nameserver):
-        return Result()
-
-    monkeypatch.setattr(
-        dns.query,
-        'udp',
-        udp_mock
-    )
-
-    record = Record('example.com', rdataset)
-    dzt.query(record)
-    assert record.rdataset_query is None

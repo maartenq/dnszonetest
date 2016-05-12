@@ -1,14 +1,21 @@
 .. highlight:: shell
 
-============
 Installation
 ============
 
-At the command line::
+Virtualenv
+----------
 
-    $ easy_install dnszonetest
+* Make virtual environment::
 
-Or, if you have virtualenvwrapper installed::
+    $ virtualenv /<path>/<to>/<virtualenv_name>
 
-    $ mkvirtualenv dnszonetest
-    $ pip install dnszonetest
+
+* Activate virtual environment::
+
+    $ source /<path>/<to>/<virtualenv_name>/bin/activate
+
+
+* Install *dnszonetest*::
+
+    (<virtualenv_name>)$ pip install dnszonetest

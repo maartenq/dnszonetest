@@ -23,6 +23,10 @@ requirements = [
    dnspython,
 ]
 
+# Add Python 2.6-specific dependencies
+if sys.version_info[:2] < (2, 7):
+        requirements.append('argparse')
+
 test_requirements = [
     'pytest',
     'tox',

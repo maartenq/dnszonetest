@@ -2,6 +2,14 @@
 History
 =======
 
+0.3.4 (2016-06-11)
+------------------
+
+* Factored out `pytest-runner`. Removes `setuptools_scm` dependency which
+  breaks RPM build on RHEL6.
+* Added recursive remove on `*.egg` in Makefile.
+
+
 0.3.3 (2016-06-11)
 ------------------
 

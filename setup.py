@@ -5,6 +5,22 @@
 
 import sys
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
+
+
+class PyTest(TestCommand):
+    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.pytest_args = []
+
+    def run_tests(self):
+        # Import here, cause outside the eggs aren't loaded
+        import pytest
+        errno = pytest.main(self.pytest_args)
+        sys.exit(errno)
+
 
 version = '0.3.3'
 
@@ -32,12 +48,10 @@ test_requirements = [
     'tox',
 ]
 
-setup_requirements = [
-    'pytest-runner',
-]
 
 setup(
     name='dnszonetest',
+    use_scm_version=False,
     version=version,
     description='DNS Zone Test tests a DNS zone file agaist a given name '
     'server.',
@@ -75,5 +89,5 @@ setup(
     ],
     test_suite='tests',
     tests_require=test_requirements,
-    setup_requires=setup_requirements,
+    cmdclass={'test': PyTest},
 )

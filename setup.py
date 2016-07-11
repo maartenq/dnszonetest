@@ -22,7 +22,7 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
-version = '0.3.3'
+version = '0.3.4'
 
 if sys.version_info < (3,):
     dnspython = 'dnspython'

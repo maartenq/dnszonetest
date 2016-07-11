@@ -21,13 +21,20 @@ from dnszonetest.main import DnsZoneTest
 logger = logging.getLogger(__name__)
 
 
-def setup_logging(verbose, quiet):
+def setup_logging(verbose, quiet, logfile=None):
     '''
     Sets up logging.
 
     :param bool verbose: verbose output.
     :param bool quiet: suppress output.
     '''
+    if verbose:
+        log_level = logging.DEBUG
+    elif quiet:
+        log_level = logging.CRITICAL
+    else:
+        log_level = logging.INFO
+
     # Root logger
     logger = logging.getLogger()
     # Clear all handlers
@@ -35,20 +42,23 @@ def setup_logging(verbose, quiet):
     logger.handlers = []
     # Root logger logs all
     logger.setLevel(logging.DEBUG)
-    # Console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(
-        logging.Formatter(fmt='%(levelname)-10s%(message)s',)
-        # logging.Formatter(fmt='%(message)s',)
-    )
-    if verbose:
-        log_level = logging.DEBUG
-    elif quiet:
-        log_level = logging.CRITICAL
+
+    if logfile is None:
+        # Console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(
+            logging.Formatter(fmt='%(levelname)-10s%(message)s',)
+        )
+        console_handler.setLevel(log_level)
+        logger.addHandler(console_handler)
     else:
-        log_level = logging.INFO
-    console_handler.setLevel(log_level)
-    logger.addHandler(console_handler)
+        # File handler
+        file_handler = logging.FileHandler(logfile)
+        file_handler.setFormatter(
+            logging.Formatter(fmt='%(levelname)-10s%(message)s',)
+        )
+        file_handler.setLevel(log_level)
+        logger.addHandler(file_handler)
 
 
 def parse_args(args):

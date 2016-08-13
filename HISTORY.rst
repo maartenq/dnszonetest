@@ -2,6 +2,14 @@
 History
 =======
 
+0.3.5 (2016-08-13)
+------------------
+
+* ISC License
+* Pinned requirements
+* Travis/Tox fixes
+
+
 0.3.4 (2016-06-11)
 ------------------
 

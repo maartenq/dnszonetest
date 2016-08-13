@@ -2,22 +2,24 @@
 # -*- coding: utf-8 -*-
 # vim: ai et sw=2 ts=2 sts=2 fenc=UTF-8 ft=yaml
 
-sudo: false
 language: python
 python: 3.5
 env:
-  - TOXENV=py26
-  - TOXENV=py27
-  - TOXENV=py33
-  - TOXENV=py34
   - TOXENV=py35
+  - TOXENV=py34
+  - TOXENV=py33
+  - TOXENV=py27
+  - TOXENV=py26
+  - TOXENV=docs
   - TOXENV=flake8
 
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   - pip install -U tox
 
+# command to run tests, e.g. python setup.py test
 script:
-  - tox -e $TOXENV
+  - tox -e ${TOXENV}
 
 after_success:
   - pip install codecov

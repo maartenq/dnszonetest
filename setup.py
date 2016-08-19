@@ -44,7 +44,7 @@ if sys.version_info[:2] < (2, 7):
         requirements.append('argparse')
 
 test_requirements = [
-    'pytest==2.9.2',
+    'pytest==3.0.0',
     'pytest-cov==2.3.1',
     'tox==2.3.1',
 ]

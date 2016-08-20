@@ -58,12 +58,38 @@ docs/_build/
 # PyBuilder
 target/
 
-# Mac OS X stuff...
-.DS_Store
+## Mac OS X
+*.DS_Store
+.AppleDouble
+.LSOverride
 
-# Vim swap files
-*.swp
-*.swo
+# Icon must end with two \r
+Icon
 
-# dnszonefile
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Vim temporary and swap files
+*~
+*.sw[po]
+
+# Dnszonefile
 testdata/
+

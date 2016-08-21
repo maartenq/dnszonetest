@@ -7,11 +7,6 @@ import sys
 from setuptools import setup
 
 
-if sys.version_info < (3,):
-    dnspython = 'dnspython'
-else:
-    dnspython = 'dnspython3'
-
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
@@ -31,7 +26,6 @@ test_requirements = [
     'pytest-cov==2.3.1',
     'tox==2.3.1',
 ]
-
 
 setup(
     name='dnszonetest',
@@ -55,12 +49,13 @@ setup(
     },
     include_package_data=True,
     install_requires=requirements,
-    license='ISCL',
+    license="ISC license",
     zip_safe=False,
     keywords='dnszonetest',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
+        'Environment :: Console',
+        'Intended Audience :: System Administrators',
         'License :: OSI Approved :: ISC License (ISCL)',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
@@ -70,6 +65,8 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Topic :: Documentation :: Sphinx',
+        'Topic :: Utilities',
     ],
     test_suite='tests',
     tests_require=test_requirements,

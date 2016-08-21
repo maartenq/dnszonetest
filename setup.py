@@ -5,24 +5,7 @@
 
 import sys
 from setuptools import setup
-from setuptools.command.test import test as TestCommand
 
-
-class PyTest(TestCommand):
-    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = []
-
-    def run_tests(self):
-        # Import here, cause outside the eggs aren't loaded
-        import pytest
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
-
-
-version = '0.3.7'
 
 if sys.version_info < (3,):
     dnspython = 'dnspython'
@@ -53,7 +36,7 @@ test_requirements = [
 setup(
     name='dnszonetest',
     use_scm_version=False,
-    version=version,
+    version='0.3.7',
     description='DNS Zone Test tests a DNS zone file agaist a given name '
     'server.',
     long_description=readme + '\n\n' + history,
@@ -76,7 +59,7 @@ setup(
     zip_safe=False,
     keywords='dnszonetest',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: ISC License (ISCL)',
         'Natural Language :: English',
@@ -90,5 +73,4 @@ setup(
     ],
     test_suite='tests',
     tests_require=test_requirements,
-    cmdclass={'test': PyTest},
 )

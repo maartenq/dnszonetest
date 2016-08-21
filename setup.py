@@ -30,7 +30,7 @@ test_requirements = [
 setup(
     name='dnszonetest',
     use_scm_version=False,
-    version='0.3.7',
+    version='1.0.0',
     description='DNS Zone Test tests a DNS zone file agaist a given name '
     'server.',
     long_description=readme + '\n\n' + history,

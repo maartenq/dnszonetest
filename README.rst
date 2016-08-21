@@ -32,8 +32,8 @@ Dns Zone Test tests a DNS zone file agaist a given name server.
 
 * Free software: ISC license
 * Documentation: https://dnszonetest.readthedocs.io
-* PyPi: https://pypi.python.org/pypi/dnszonetest
 * GitHub: https://github.com/maartenq/dnszonetest
+* PyPi: https://pypi.python.org/pypi/dnszonetest
 * Travis CI: https://travis-ci.org/maartenq/dnszonetest
 * Codecov: https://codecov.io/github/maartenq/dnszonetest
 * PyUp: https://pyup.io/repos/github/maartenq/dnszonetest/

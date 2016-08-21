@@ -2,6 +2,17 @@
 History
 =======
 
+1.0.0 (2016-08-21)
+------------------
+
+* PyPi deployment via Travic CI
+* README.rst updates
+* Package removed from requirments_dev.txt
+* Remove pytest command from setup.py
+* Made sure flake8 and docs will run with Py27 in tox (will fail inP26)
+* .gitignore + OS X and VIM file
+
+
 0.3.7 (2016-08-19)
 ------------------
 

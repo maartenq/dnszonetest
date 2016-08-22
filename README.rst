@@ -42,7 +42,7 @@ Dns Zone Test tests a DNS zone file agaist a given name server.
 Features
 --------
 
-* TODO
+* Test all resources in a given zonefile to given nameserver.
 
 
 Credits

@@ -20,30 +20,16 @@ install: pip install -U tox
 
 # command to run tests, e.g. python setup.py test
 script: tox -e ${TOXENV}
-
 after_success:
 - pip install codecov
 - codecov
-
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
   user: maartenq
   password:
-    secure: !!binary |
-      V3daUUxpdDI2RkZNWHhFOFRtSjVoYitwZFNwMXVveitiVlpLSE5PajVHdUQwUXVadlZNcWNMOUow
-      eEt3Mkk0RTZXNlpKMU5TSWJ3U2REbEVSOHJEY3FGZXJiaFZjQjM2d1l2MUhOdktZREorY3JyNFhq
-      MW5kNDBxT2tOSkJHR0xES2JWelluU25GSXAwN09XZENFK2hSN0R1eUt5Z2VzdmpMaU4rZDd4VURE
-      NXg1b3pyamp2ZitUSkE3bFh1SzE2Vjlnckt0SG4wdWVHUktLbmR0a2hiNHNZWHYvQUpyRkVtRmlS
-      aW80WGRZVkVycU9JUmphSENtVnZ0MjByZ0lyejNqR21mNTY0R3crNDBDVnlKektJOVJUZDJiZUdM
-      NE1wallzVlpaREJGdERRbEZqNU1qNExSU1k3SGFYaE0vQUVyaXZyeVZ3MlNHVXZ4TFlDR3BUUW1J
-      YklpWW9RMW1jTFp2M2szajQ2ajVHU0tSUVk5NWNhMHlxcVM1QWc1Q1ZpWlhLVjV2NWZvOXVjVXBV
-      eC9oTEcvSEY1UFYyTDduZlc2ZXdHeFFVay8vRFc2ekF1UkZCa3FjbHdZVmFVbTZha0t4SUVIcVAw
-      eGpMNnFZb2RkL0hScWsxUVJqVTAyS05lL0dFSmJVUHhNQXA4RmtXdTJ4dHJFUll5V1d6TDlhdThD
-      VWRVL3NFU2hyYWQxdmY0ZHpDclJPY0NjQ1VYK3BwSWt2L2RFdDBVdE5mc2Fwb0o0Q0FNQ2oxNEZ4
-      WFNNSGFqVUI2eWZ3SlhERU5rOFVpTG0zb08wbWlxL2ZIWWNFWjBOMVgrUEZFbUM0VCtJdGxIUHlN
-      SVpIYmpJL2dwelhwUXpVZzZuRkNjQk55czBOYzJBWHVubEp2SFlsUFluRng1eHUxdWxaQ2crcmM9
+    secure: KH/Nq3JEh+JvSadY+RiuxYfCZvOpNYwZaDiX/JhBpsc/fWYihBynS0iKiDwvmnB1XbBKimRrOoOzZcpnXYDCqFDSjVJzRggjddxM3PAYzgCm2fSSLfq9245kxvV26GJzCGqfc0BEPI687aVH+XMPykr6MqqxtlH9ogJ4rXCLELUslh40T5MXWpAc5072f9d2Xf5Zhd5/Jp+7XarIrcIpt9OKYTpq2C7BLSUC3GcTR3LKrACwsVE6OtGhB8+IYNxUw6WmtS7KViAsHYfzHnGxywTjNLQ86R1FRze18jsuY+8/QGDwUITh/50V+dzH3XNv6EwJTfQvSUSUmyxMOcI+g7gflb70XOJqVYZqauLIZcpLNxiIxe4Q5SkMss921+4sx7TIosPe0iU0V/DF2KU0/R9It8CEli2n40SblERpDQtZjr0DyFgwW5NXGoge2cY9l/Peg/eqp0dgyw1GV6QOnMnqIjxDj2heyMYtmIIRROEFO8tfoA0bWaRubmPVmzaV0t1QSBIvy8DfOjQXMqfi2L7OAUrMQEj5dYy6QGM23eDwixe2Gat0m5BUKo0KFeFb2hXke+g3ULF7y03YgHw2FXQJ5x0Vaf4zinnARLOKVwrwMpIEWjtuolcLNHuU46IxqUJLOczgzl5npcDLec8zNAXW4xMAmS6b4M/PALpYAvA=
   'on':
-    tags: true
-    repo: maartenq/dnszonetest
     condition: $TOXENV == py27
+    repo: maartenq/dnszonetest
+    tags: true

@@ -14,7 +14,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'dnspython==1.14.0',
+    'dnspython',
 ]
 
 # Add Python 2.6-specific dependencies
@@ -22,9 +22,9 @@ if sys.version_info[:2] < (2, 7):
         requirements.append('argparse')
 
 test_requirements = [
-    'pytest==3.0.0',
-    'pytest-cov==2.3.1',
-    'tox==2.3.1',
+    'pytest>=3.0.1',
+    'pytest-cov>=2.3.1',
+    'tox>=2.3.1',
 ]
 
 setup(

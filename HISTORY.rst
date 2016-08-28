@@ -2,6 +2,13 @@
 History
 =======
 
+1.0.2 (2016-08-28)
+------------------
+
+* Removed dev requirements
+* Update Travis key
+
+
 1.0.1 (2016-08-28)
 ------------------
 

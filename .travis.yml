@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 # vim: ai et ts=2 sw=2 sts=2 ft=yaml fenc=UTF-8
 ---
-
 language: python
 python: 3.5
-
 env:
   - TOXENV=py35
   - TOXENV=py34
@@ -20,16 +18,7 @@ install: pip install -U tox
 
 # command to run tests, e.g. python setup.py test
 script: tox -e ${TOXENV}
+
 after_success:
-- pip install codecov
-- codecov
-deploy:
-  provider: pypi
-  distributions: sdist bdist_wheel
-  user: maartenq
-  password:
-    secure: vePqM90wT6ee3QIy4/JkKlezYK7o3aNOzwtpVLxsWU/HvVPIc0dwlKfBYjjPLowxS5fEpjiFDzSx7Hfhv/3nhfvAzDnBm78FRPYB3HToJOP6UWZcTd6Er/6yPiUg2mbgj7M3NVmEvxav1ue7fhq4F7ciCsfEWwAMdAEYcK2NMS2CtFq9527uytM/mDjmGCeSQLFW0pyhhSCkkGUTuNzAwJAbPTWuvmUNurJ7keKEUNqYC8eUWNNh9pELcTvGM9la1+t4dUMK0KANTp1EdF+yl5tJEInAMvIC4g4CoJRdBSAWWt1IzDP3wiu63E2MJ7ME1F7+vppfpKmOBby2uhZtZJN/AHc9/cTatP8G1Cnp7xfbldZ6UVwGqcSecRxXPxfOIzENDRGKlexB6bUIOelIfcWq9iqaDVkkCWSau7MuXh2ph5c0Yw2QAd2iVMx2b0ENNZbKN/msMuJPd+UzIxTnKUjjeEnIApi1fwy/l2zvyIfqvx299/QfMKZhOC9UgcB75uE6RFIWrkohPVGr/7uCG33ZL9YjQhxZ7bQEqPeZBSicGUs/FcU3xiiGTyTpKqWwVdTvvc2X9VqIt03yhYvwQLL3BPNjs1ZBwvW+CVtpyJR+pb/hzxXsgPGLjjnx4jmeVzqr2duIHsPC99zy2PYggbbg9vaPeewIgCzq9TDwVto=
-  'on':
-    condition: $TOXENV == py27
-    repo: maartenq/dnszonetest
-    tags: true
+  - pip install codecov
+  - codecov

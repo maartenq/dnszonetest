@@ -39,8 +39,20 @@ class Record(object):
         self.query_res = None
 
     def query(self, nameserver_ip, no_recursion):
-        logger.debug('RECORD     : %s', self.name)
-        logger.debug('FROM FILE  : %s', self.rdataset_file)
+        logger.debug(
+            '%-21s: %s %s',
+            'Expected',
+            self.name,
+            ' '.join(
+                sorted(
+                    [
+                        x for x in
+                        str(self.rdataset_file).split('\n')
+                        if x
+                    ]
+                )
+            )
+        )
         self.query_msg = dns.message.make_query(
             self.name,
             self.rdataset_file.rdtype
@@ -54,12 +66,30 @@ class Record(object):
                 timeout=10
             )
         except dns.exception.Timeout as err:
-            logger.error('TIMEOUT: %s', err)
+            logger.error(
+                '%-21s: %s %s',
+                'Timeout',
+                self.name,
+                err,
+            )
         try:
             self.rdataset_query = self.query_res.answer[0].to_rdataset()
-            logger.debug('FROM QUERY : %s', self.rdataset_query)
+            logger.debug(
+                'From %-16s: %s %s',
+                nameserver_ip,
+                self.name,
+                ' '.join(
+                    sorted(
+                        [
+                            x for x in
+                            str(self.rdataset_query).split('\n')
+                            if x
+                        ]
+                    )
+                )
+            )
         except (IndexError, AttributeError):
-            logger.warning('QUERY: %s : NO RESULT', self.name)
+            pass
 
     @property
     def rdataset_match(self):
@@ -112,9 +142,8 @@ class DnsZoneTest(object):
         '''
         Get Resolver object depending on self.nameserver
         '''
-        logger.info('NAME SERVER: %s', self.nameserver)
         if self.nameserver is None:
-            logger.info('Get IP number(s) of system resolvers')
+            logger.debug('Get IP number(s) of system resolvers')
             self.nameserver_ip = \
                 dns.resolver.get_default_resolver().nameservers[0]
         else:
@@ -128,7 +157,6 @@ class DnsZoneTest(object):
                         err
                     )
                 )
-        logger.info('NAME SERVER IP: %s', self.nameserver_ip)
 
     def get_zone_from_file(self):
         '''
@@ -159,26 +187,46 @@ class DnsZoneTest(object):
                 if not record.ttl_match:
                     self.mismatch_ttl += 1
                     logger.warning(
-                        'RECORD: %s TTL: %s',
+                        '%-21s: %s TTL: %s',
+                        'Expected',
                         record.name,
                         record.rdataset_file.ttl
                     )
                     logger.warning(
-                        'RECORD: %s TTL : %s',
+                        'From %-16s: %s TTL: %s',
+                        self.nameserver_ip,
                         record.name,
                         record.rdataset_query.ttl
                     )
             if not record.rdataset_match:
                 self.mismatch_rdataset += 1
                 logger.warning(
-                    'RECORD: %s IN ZONEFILE: %s',
+                    '%-21s: %s %s',
+                    'Expected',
                     record.name,
-                    record.rdataset_file
+                    ' '.join(
+                        sorted(
+                            [
+                                x for x in
+                                str(record.rdataset_file).split('\n')
+                                if x
+                            ]
+                        )
+                    )
                 )
                 logger.warning(
-                    'RECORD: %s FROM QUERY : %s',
+                    'From %-16s: %s %s',
+                    self.nameserver_ip,
                     record.name,
-                    record.rdataset_query
+                    ' '.join(
+                        sorted(
+                            [
+                                x for x in
+                                str(record.rdataset_query).split('\n')
+                                if x
+                            ]
+                        )
+                    )
                 )
         if self.mismatch_ttl > 0 or self.mismatch_rdataset > 0:
             self.errno = 1

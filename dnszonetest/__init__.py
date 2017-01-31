@@ -10,4 +10,4 @@ Main package for dnszonetest.
 
 __author__ = 'Maarten Diemel'
 __email__ = 'maarten@maartendiemel.nl'
-__version__ = '1.0.7'
+__version__ = '1.1.0'

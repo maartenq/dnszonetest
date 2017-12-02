@@ -18,16 +18,6 @@ DNS Zone Test
         :target: https://dnszonetest.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/maartenq/dnszonetest/shield.svg
-        :target: https://pyup.io/repos/github/maartenq/dnszonetest/
-        :alt: Updates
-
-.. image:: https://pyup.io/repos/github/maartenq/dnszonetest/python-3-shield.svg
-        :target: https://pyup.io/repos/github/maartenq/dnszonetest/
-        :alt: Python 3
-
-
-
 Dns Zone Test tests a DNS zone file agaist a given name server.
 
 * Free software: ISC license
@@ -36,7 +26,6 @@ Dns Zone Test tests a DNS zone file agaist a given name server.
 * PyPi: https://pypi.python.org/pypi/dnszonetest
 * Travis CI: https://travis-ci.org/maartenq/dnszonetest
 * Codecov: https://codecov.io/github/maartenq/dnszonetest
-* PyUp: https://pyup.io/repos/github/maartenq/dnszonetest/
 
 
 Features
@@ -52,4 +41,3 @@ This package was created with Cookiecutter_ and the `maartenq/cookiecutter-pypac
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`maartenq/cookiecutter-pypackage`: https://github.com/maartenq/cookiecutter-pypackage
-

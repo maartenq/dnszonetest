@@ -29,7 +29,7 @@ test_requirements = [
 
 setup(
     name='dnszonetest',
-    version='1.1.2',
+    version='1.1.3',
     description='DNS Zone Test tests a DNS zone file agaist a given name '
     'server.',
     long_description=readme + '\n\n' + history,

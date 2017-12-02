@@ -2,6 +2,13 @@
 History
 =======
 
+1.1.3 (2017-08-11)
+------------------
+
+* requirements update
+* Removed Python2.6 testing
+
+
 1.1.2 (2017-08-11)
 ------------------
 

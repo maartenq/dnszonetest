@@ -2,6 +2,15 @@
 History
 =======
 
+1.2.0 (2018-09-10)
+------------------
+
+* Add option protocol tcp/udp
+* Default upd edns
+* Default upd payload 2048
+* Updated requirements_dev.txt
+
+
 1.1.3 (2017-08-11)
 ------------------
 

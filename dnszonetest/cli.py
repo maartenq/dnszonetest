@@ -88,6 +88,12 @@ def parse_args(args):
         help='DNS server to query.',
     )
     parser.add_argument(
+        '-p',
+        '--protocol',
+        default='udp',
+        help='Protocol to use (udp/tcp) .',
+    )
+    parser.add_argument(
         '-v',
         '--verbose',
         action='store_true',
@@ -147,6 +153,7 @@ def main():
         args.zonename,
         args.zonefile,
         nameserver=args.nameserver,
+        protocol=args.protocol,
         verbose=args.verbose,
         quiet=args.quiet,
         no_recursion=args.no_recursion,

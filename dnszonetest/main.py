@@ -31,14 +31,15 @@ logger = logging.getLogger(__name__)
 
 
 class Record(object):
-    def __init__(self, name, rdataset_file):
+    def __init__(self, name, rdataset_file, protocol='udp'):
         self.name = name
         self.rdataset_file = rdataset_file
+        self.protocol = protocol
         self.rdataset_query = None
         self.query_msg = None
         self.query_res = None
 
-    def query(self, nameserver_ip, no_recursion):
+    def query(self, nameserver_ip, no_recursion=False):
         logger.debug(
             '%-21s: %s %s',
             'Expected',
@@ -55,12 +56,18 @@ class Record(object):
         )
         self.query_msg = dns.message.make_query(
             self.name,
-            self.rdataset_file.rdtype
+            self.rdataset_file.rdtype,
+            use_edns=True,
+            payload=2048,
         )
+        if self.protocol == 'tcp':
+            dns_query = dns.query.tcp
+        else:
+            dns_query = dns.query.udp
         if no_recursion:
             self.query_msg.flags ^= dns.flags.RD
         try:
-            self.query_res = dns.query.udp(
+            self.query_res = dns_query(
                 self.query_msg,
                 nameserver_ip,
                 timeout=10
@@ -109,13 +116,14 @@ class DnsZoneTest(object):
     '''
     API equivalent to using dnszonetest at the command line.
     '''
-    def __init__(self, zonename, zonefile, nameserver=None, verbose=False,
-                 quiet=False, no_recursion=False, compare_ttl=False,
-                 compare_ns=False, compare_soa=False):
+    def __init__(self, zonename, zonefile, nameserver=None, protocol='udp',
+                 verbose=False, quiet=False, no_recursion=False,
+                 compare_ttl=False, compare_ns=False, compare_soa=False):
         '''
         :param str zonename: Zone name.
         :param str zonefile: Zone file name.
-        :param bool nameserver: name server to use.
+        :param str nameserver: name server to use.
+        :param str protocol: protocol to use (UDP/TCP)
         :param bool verbose: verbose output.
         :param bool quiet: suppress output.
         :param bool no_recursion: do not use recursion.
@@ -126,6 +134,7 @@ class DnsZoneTest(object):
         self.zonename = zonename
         self.zonefile = zonefile
         self.nameserver = nameserver
+        self.protocol = protocol
         self.verbose = verbose
         self.quiet = quiet
         self.no_recursion = no_recursion
@@ -181,7 +190,7 @@ class DnsZoneTest(object):
             if not self.compare_soa and \
                     rdataset_file.rdtype == dns.rdatatype.SOA:
                 continue
-            record = Record(name, rdataset_file)
+            record = Record(name, rdataset_file, self.protocol)
             record.query(self.nameserver_ip, self.no_recursion)
             if self.compare_ttl and record.rdataset_query is not None:
                 if not record.ttl_match:

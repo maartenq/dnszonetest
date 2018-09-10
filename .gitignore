@@ -90,6 +90,9 @@ Temporary Items
 *~
 *.sw[po]
 
+# Pytest
+.pytest_cache
+
 # Dnszonefile
 testdata/
 

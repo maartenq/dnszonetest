@@ -4,7 +4,7 @@
 
 '''
 dnszonetest.cli
--------------
+---------------
 
 Main dnszonetest CLI.
 '''

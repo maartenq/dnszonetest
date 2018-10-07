@@ -4,7 +4,7 @@
 
 '''
 dnszonetest.main
--------------
+----------------
 
 Main dnszonetest
 '''

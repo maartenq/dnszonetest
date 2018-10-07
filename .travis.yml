@@ -1,14 +1,12 @@
 # .travis.yml
-# vim: ai et ts=2 sw=2 sts=2 ft=yaml fenc=UTF-8
+# vim: ai et ts=4 sw=4 sts=4 ft=yaml fileencoding=UTF-8
 ---
 sudo: false
 language: python
 python:
-  - "3.6"
-  - "3.5"
   - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
 install: pip install -U tox-travis
 script: tox
-after_success:
-  - pip install codecov
-  - codecov
